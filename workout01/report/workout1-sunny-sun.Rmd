@@ -1,9 +1,12 @@
-#*************
-#Title: NBA 2018 Teams 
-#Description: a short description of what the script is about
-#input(s): nba2018.csv
-#output(s):nba2018-teams.csv
-#*************
+---
+title: "workout1"
+author: "Sunny Sun"
+date: "10/1/2018"
+output: github_document
+---
+
+```{r}
+
 library(readr)
 library(dplyr)
 nba2018<-read_csv("~/Desktop/hw-stat133/workout01/data/nba2018.csv")
@@ -14,12 +17,13 @@ position<-factor(nba2018$position,levels=c("C","PF","PG","SF","SG"),labels = c("
 missed_fg<-nba2018$field_goals_atts - nba2018$field_goals
 missed_ft<-nba2018$points1_atts-nba2018$points1
 rebounds<-nba2018$off_rebounds + nba2018$def_rebounds
-efficiency<- (nba2018$points+rebounds+nba2018$assists+nba2018$steals+nba2018$blocks-missed_fg-missed_ft-nba2018$turnovers)/nba2018$games
+efficiency<- (nba2018$points+nba2018$total_rebounds+nba2018$assists+nba2018$steals+nba2018$blocks-missed_fg-missed_ft-nba2018$turnovers)/nba2018$games
 summary_efficiency<-summary(efficiency)
 summary_efficiency
 sink("../output/eficiency-summary.txt")
 teams<-summarise(group_by(nba2018,team), experience=round(sum(experience)),salary=round(sum(salary)),points3=sum(points3),points2=sum(points2),points1=sum(points1),points=sum(points),off_rebounds=sum(off_rebounds),def_rebounds=sum(def_rebounds),assists=sum(assists),steals=sum(steals),blocks=sum(blocks),turnovers=sum(turnovers),fouls=sum(fouls),efficiency=sum(efficiency))
 summary_teams<-summary(teams)
+summary_teams
 sink("../data/teams-summary.txt")
 
 
@@ -71,16 +75,13 @@ ggplot(eff_teams, aes(x = reorder(team, +eff), y = eff)) +
 r_teams <- teams %>%
   group_by(teams$team) %>% 
   summarise(reb=sum(teams$off_rebounds + teams$def_rebounds))
-ggplot(r_teams, aes(x = reorder(team, reb), y = reb)) + 
+ggplot(r_teams, aes(x = reorder(teams$team, +reb), y = +reb)) + 
   geom_bar(stat = 'identity') + 
   coord_flip() +
   labs(y = "Rebounds", x = "Team", title = "NBA Teams ranked by Total Rebounds") + 
   geom_hline(aes(yintercept = mean(reb)), colour = "red", size = 1.5)
 
-nba2018_teams = read.csv("../data/nba2018-teams.csv")
-teams
-sal_teams <- nba2018_teams %>% group_by(nba2018_teams$X....team) %>% summarise(salaries=sum(nba2018$salary))
-ggplot(sal_teams,aes(x=reorder(teams, salaries)))+geom_bar(stat='identity')+coord_flip()+labs(y="Salary(in millions)",x="Team",title="NBA Teams ranked by Total Salary")+geom_hline(aes(yintercept = mean(salaries)),colour="red",size=1.5)
+
 
 
 
@@ -88,5 +89,4 @@ ggplot(sal_teams,aes(x=reorder(teams, salaries)))+geom_bar(stat='identity')+coor
 #Very difficult, spend over 7 hours doing it. 
 
 
-
-
+```
